@@ -10,7 +10,7 @@ Live demo: [https://ng-heroicons.dimaslz.dev](https://ng-heroicons.dimaslz.dev)
 
 ## How to install in your project
 
-This package has compatibility with Angular version from 11 to 18.
+This package has compatibility with Angular version from 11 to 19.
 
 | angular version | package version ||
 |-|-|-|
@@ -24,6 +24,7 @@ This package has compatibility with Angular version from 11 to 18.
 | 18.x.x | `^1.18.0` ||
 |        | `^1.18.1` ||
 |        | `^1.18.2` | default |
+| 19.x.x | `^1.19.0` || Still uses modules!
 
 `$ yarn add @dimaslz/ng-heroicons@^XX`
 
@@ -91,14 +92,16 @@ By using a dynamic component `<ng-heroicons ... icon="..." />` (from versions **
 
 ## Development
 
-This is a monorepo to build the icon components for multiple Angular versions. To avoid conflics with compatibility from Angular 11 to 14, we are not using `workspaces`, only separated folder per Angular setup.
+This is a monorepo to build the icon components for multiple Angular versions. To avoid conflics with compatibility from Angular 11 to 19, we are not using `workspaces`, only separated folder per Angular setup.
 
 ### Landing
 
 Landing page is the common landing <https://ng-heroicons.dimaslz.dev/> which is using the last Angular version.
 
-- Build the Angular 14 lib: `$ yarn --cwd=packages/angular-v14 build lib -c production`
-- Refresh the distribution content in `dist/v14`: `$ yarn v14-copy-release`
+- Generate assets: `$ yarn generate`
+- Copy assets: `$ yarn v19-copy-assets`
+- Build the Angular 19 lib: `$ yarn --cwd=packages/angular-v19 build lib -c production`
+- Refresh the distribution content in `dist/v19`: `$ yarn v19-copy-release`
 - Install Landing packages: `$ yarn --cwd=landing install`
 - Run project: `$ yarn --cwd=landing start`
 - Join the page in [http://localhost:4200](http://localhost:4200)
@@ -117,6 +120,7 @@ Keep in mind, first you should build the `lib` package
 | angular 16 | `$ yarn --cwd=packages/angular-v16 build lib -c production` |
 | angular 17 | `$ yarn --cwd=packages/angular-v17 build lib -c production` |
 | angular 18 | `$ yarn --cwd=packages/angular-v18 build lib -c production` |
+| angular 19 | `$ yarn --cwd=packages/angular-v19 build lib -c production` |
 
 ### Run playground per version
 
@@ -132,6 +136,7 @@ Keep in mind, first you should build the `lib` package. This playgrounds does no
 | angular 16 | `$ yarn --cwd=packages/angular-v16 start playground` |
 | angular 17 | `$ yarn --cwd=packages/angular-v17 start playground` |
 | angular 18 | `$ yarn --cwd=packages/angular-v18 start playground` |
+| angular 19 | `$ yarn --cwd=packages/angular-v19 start playground` |
 
 ### Regenerate components
 

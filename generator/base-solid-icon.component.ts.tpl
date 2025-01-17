@@ -8,7 +8,8 @@ import { Component, Input, OnChanges, SimpleChanges, OnInit, ChangeDetectionStra
     height: inherit;
     width: inherit;
     color: inherit;
-  }`]
+  }`],
+  standalone: false
 })
 export class BaseSolidIconComponent implements OnInit, OnChanges {
   @Input() size: number = 24;

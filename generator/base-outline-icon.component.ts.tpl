@@ -10,6 +10,7 @@ import { Component, Input, OnChanges, SimpleChanges, OnInit, ChangeDetectionStra
     color: inherit;
     stroke-width: inherit;
   }`],
+  standalone: false
 })
 export class BaseOutlineIconComponent implements OnInit, OnChanges {
   @Input() size: number = 24;
