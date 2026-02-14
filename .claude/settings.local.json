@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:angular.dev)",
+      "Bash(npm view:*)",
+      "Bash(yarn info:*)",
+      "Bash(export PATH=\"/opt/homebrew/bin:$PATH\")",
+      "Bash(rsync:*)",
+      "Bash(/bin/cp:*)",
+      "Bash(/bin/rm:*)",
+      "Bash(yarn --cwd=packages/angular-v20 install)",
+      "Bash(yarn --cwd=packages/angular-v21 install)",
+      "Bash(/usr/local/bin/yarn:*)",
+      "Bash(/opt/homebrew/bin/yarn --version)",
+      "Bash(export PATH=\"/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:$HOME/.yarn/bin:$HOME/.nvm/versions/node/*/bin:$PATH\")",
+      "Bash(export PATH=\"/Users/soerenkroell/.yarn/bin:$PATH\")",
+      "Bash(yarn:*)",
+      "Bash(node:*)",
+      "Bash(/usr/bin/find:*)",
+      "Bash(export PATH=\"/Users/soerenkroell/.nvm/versions/node/v22.17.1/bin:$PATH\")",
+      "Bash(npm --version:*)",
+      "Bash(corepack enable:*)",
+      "Bash(export PATH:*)",
+      "Bash(export PATH=\"/usr/bin:/bin:$PATH\")",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}
