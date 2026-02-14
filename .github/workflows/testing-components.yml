@@ -25,6 +25,9 @@ jobs:
       angularv16: ${{ steps.filter.outputs.angularv16 }}
       angularv17: ${{ steps.filter.outputs.angularv17 }}
       angularv18: ${{ steps.filter.outputs.angularv18 }}
+      angularv19: ${{ steps.filter.outputs.angularv19 }}
+      angularv20: ${{ steps.filter.outputs.angularv20 }}
+      angularv21: ${{ steps.filter.outputs.angularv21 }}
 
     steps:
       - uses: dorny/paths-filter@v3
@@ -47,6 +50,12 @@ jobs:
               - 'packages/angular-v17/**'
             angularv18:
               - 'packages/angular-v18/**'
+            angularv19:
+              - 'packages/angular-v19/**'
+            angularv20:
+              - 'packages/angular-v20/**'
+            angularv21:
+              - 'packages/angular-v21/**'
 
   dependencies:
     name: "install dependencies"
@@ -604,3 +613,189 @@ jobs:
 
       - name: "running tests"
         run: cd packages/angular-v18 && yarn test
+
+  test-angular-v19node20:
+    name: test angular v19 - node 20
+    needs: dependencies
+    if: ${{ success() && needs.changes.outputs.angularv19 == 'true' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: "Restore cache files"
+        uses: "actions/cache@v4"
+        id: "main-files"
+        with:
+          path: |
+            tsconfig.json
+            packages
+          key: "${{ github.sha }}"
+
+      - name: "install dependencies"
+        run: |
+          mv tsconfig.json packages/angular-v19
+          rm packages/angular-v19/yarn.lock
+          cd packages/angular-v19
+          yarn install
+
+      - name: "running tests"
+        run: cd packages/angular-v19 && yarn test
+
+  test-angular-v19node22:
+    name: test angular v19 - node 22
+    needs: dependencies
+    if: ${{ success() && needs.changes.outputs.angularv19 == 'true' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: "Restore cache files"
+        uses: "actions/cache@v4"
+        id: "main-files"
+        with:
+          path: |
+            tsconfig.json
+            packages
+          key: "${{ github.sha }}"
+
+      - name: "install dependencies"
+        run: |
+          mv tsconfig.json packages/angular-v19
+          rm packages/angular-v19/yarn.lock
+          cd packages/angular-v19
+          yarn install
+
+      - name: "running tests"
+        run: cd packages/angular-v19 && yarn test
+
+  test-angular-v20node20:
+    name: test angular v20 - node 20
+    needs: dependencies
+    if: ${{ success() && needs.changes.outputs.angularv20 == 'true' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: "Restore cache files"
+        uses: "actions/cache@v4"
+        id: "main-files"
+        with:
+          path: |
+            tsconfig.json
+            packages
+          key: "${{ github.sha }}"
+
+      - name: "install dependencies"
+        run: |
+          mv tsconfig.json packages/angular-v20
+          rm packages/angular-v20/yarn.lock
+          cd packages/angular-v20
+          yarn install
+
+      - name: "running tests"
+        run: cd packages/angular-v20 && yarn test
+
+  test-angular-v20node22:
+    name: test angular v20 - node 22
+    needs: dependencies
+    if: ${{ success() && needs.changes.outputs.angularv20 == 'true' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: "Restore cache files"
+        uses: "actions/cache@v4"
+        id: "main-files"
+        with:
+          path: |
+            tsconfig.json
+            packages
+          key: "${{ github.sha }}"
+
+      - name: "install dependencies"
+        run: |
+          mv tsconfig.json packages/angular-v20
+          rm packages/angular-v20/yarn.lock
+          cd packages/angular-v20
+          yarn install
+
+      - name: "running tests"
+        run: cd packages/angular-v20 && yarn test
+
+  test-angular-v21node20:
+    name: test angular v21 - node 20
+    needs: dependencies
+    if: ${{ success() && needs.changes.outputs.angularv21 == 'true' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: "Restore cache files"
+        uses: "actions/cache@v4"
+        id: "main-files"
+        with:
+          path: |
+            tsconfig.json
+            packages
+          key: "${{ github.sha }}"
+
+      - name: "install dependencies"
+        run: |
+          mv tsconfig.json packages/angular-v21
+          rm packages/angular-v21/yarn.lock
+          cd packages/angular-v21
+          yarn install
+
+      - name: "running tests"
+        run: cd packages/angular-v21 && yarn test
+
+  test-angular-v21node22:
+    name: test angular v21 - node 22
+    needs: dependencies
+    if: ${{ success() && needs.changes.outputs.angularv21 == 'true' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: "Restore cache files"
+        uses: "actions/cache@v4"
+        id: "main-files"
+        with:
+          path: |
+            tsconfig.json
+            packages
+          key: "${{ github.sha }}"
+
+      - name: "install dependencies"
+        run: |
+          mv tsconfig.json packages/angular-v21
+          rm packages/angular-v21/yarn.lock
+          cd packages/angular-v21
+          yarn install
+
+      - name: "running tests"
+        run: cd packages/angular-v21 && yarn test
