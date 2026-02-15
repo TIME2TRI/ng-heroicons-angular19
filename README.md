@@ -10,7 +10,7 @@ Live demo: [https://ng-heroicons.dimaslz.dev](https://ng-heroicons.dimaslz.dev)
 
 ## How to install in your project
 
-This package has compatibility with Angular version from 11 to 19.
+This package has compatibility with Angular version from 11 to 21.
 
 | angular version | package version ||
 |-|-|-|
@@ -25,6 +25,8 @@ This package has compatibility with Angular version from 11 to 19.
 |        | `^1.18.1` ||
 |        | `^1.18.2` | default |
 | 19.x.x | `^1.19.0` || Still uses modules!
+| 20.x.x | `^1.20.0` || Still uses modules!
+| 21.x.x | `^1.21.0` || Still uses modules!
 
 `$ yarn add @dimaslz/ng-heroicons@^XX`
 
@@ -92,7 +94,7 @@ By using a dynamic component `<ng-heroicons ... icon="..." />` (from versions **
 
 ## Development
 
-This is a monorepo to build the icon components for multiple Angular versions. To avoid conflics with compatibility from Angular 11 to 19, we are not using `workspaces`, only separated folder per Angular setup.
+This is a monorepo to build the icon components for multiple Angular versions. To avoid conflics with compatibility from Angular 11 to 21, we are not using `workspaces`, only separated folder per Angular setup.
 
 ### Landing
 
@@ -121,6 +123,8 @@ Keep in mind, first you should build the `lib` package
 | angular 17 | `$ yarn --cwd=packages/angular-v17 build lib -c production` |
 | angular 18 | `$ yarn --cwd=packages/angular-v18 build lib -c production` |
 | angular 19 | `$ yarn --cwd=packages/angular-v19 build lib -c production` |
+| angular 20 | `$ yarn --cwd=packages/angular-v20 build lib -c production` |
+| angular 21 | `$ yarn --cwd=packages/angular-v21 build lib -c production` |
 
 ### Run playground per version
 
@@ -137,6 +141,8 @@ Keep in mind, first you should build the `lib` package. This playgrounds does no
 | angular 17 | `$ yarn --cwd=packages/angular-v17 start playground` |
 | angular 18 | `$ yarn --cwd=packages/angular-v18 start playground` |
 | angular 19 | `$ yarn --cwd=packages/angular-v19 start playground` |
+| angular 20 | `$ yarn --cwd=packages/angular-v20 start playground` |
+| angular 21 | `$ yarn --cwd=packages/angular-v21 start playground` |
 
 ### Regenerate components
 
