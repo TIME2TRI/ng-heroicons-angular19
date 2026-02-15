@@ -18,9 +18,10 @@ const heroiconsPath = path.resolve(`${root}/heroicons`);
 const heroiconsGitRepo = "https://github.com/tailwindlabs/heroicons.git";
 const originalHeroiconsPath = path.resolve(`${root}/heroicons`);
 const TYPES = ["outline", "solid"];
-const VERSIONS = ["v12", "v13", "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21"];
+const VERSIONS = ["v12", "v13", "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v21s"];
+const STANDALONE_VERSIONS = ["v21s"];
 const ANGULAR_VERSION = VERSIONS.map((version) => ({
-  [version]: `angular-${version}`,
+  [version]: version === "v21s" ? `angular-v21-standalone` : `angular-${version}`,
 })).reduce((a, b) => ({ ...a, ...b }), {});
 
 async function prompt(props, onCancel = null) {
@@ -75,9 +76,10 @@ async function cloneHeroicons() {
   console.log("Heroicons repo cloned! \n");
 }
 
-async function SVGToAngular({ selector, template, varName, className, type }) {
+async function SVGToAngular({ selector, template, varName, className, type, standalone = false }) {
+  const tplSuffix = standalone ? '-standalone' : '';
   let componentTpl = await fs.readFile(
-    `${here}/${type}-component.tpl.txt`,
+    `${here}/${type}-component${tplSuffix}.tpl.txt`,
     "utf8"
   );
 
@@ -136,7 +138,7 @@ async function setIconsInPlayground({ icons, type, iconTpl }) {
   return fs.writeFile(iconComponentsPath, wrapperTpl);
 }
 
-async function writeFiles({ files, type }) {
+async function writeFiles({ files, type, destDir = `${destHeroicons}/components` }) {
   const exportStatements = files
     .map(({ filename }) => {
       return `export * from './${filename.replace(".ts", "")}';`;
@@ -144,7 +146,7 @@ async function writeFiles({ files, type }) {
     .join("\n");
 
   await fs.writeFile(
-    `${destHeroicons}/components/${type}/index.ts`,
+    `${destDir}/${type}/index.ts`,
     exportStatements
   );
 
@@ -213,11 +215,11 @@ async function getSVGContent(iconFilesData) {
   );
 }
 
-async function getAngularComponent(contentsIcon) {
+async function getAngularComponent(contentsIcon, standalone = false) {
   return await Promise.all(
     contentsIcon.map(
       async ({ selector, template, className, type, varName, ...rest }) => {
-        const svgToAngularData = { selector, template, className, type, varName };
+        const svgToAngularData = { selector, template, className, type, varName, standalone };
         return {
           component: await SVGToAngular(svgToAngularData),
           ...svgToAngularData,
@@ -228,15 +230,15 @@ async function getAngularComponent(contentsIcon) {
   );
 }
 
-async function writeFileIcons(angularComponents) {
+async function writeFileIcons(angularComponents, destDir = `${destHeroicons}/components`) {
   await Promise.all(
     angularComponents.map(({ component, filename, type }) => {
-      return fs.writeFile(`${destHeroicons}/components/${type}/${filename}`, component);
+      return fs.writeFile(`${destDir}/${type}/${filename}`, component);
     })
   );
 }
 
-async function generateModule(angularComponents, type) {
+async function generateModule(angularComponents, type, destDir = `${destHeroicons}/components`) {
   let moduleComponents = [];
   let moduleImports = [];
 
@@ -248,6 +250,7 @@ async function generateModule(angularComponents, type) {
         ...rest,
       })),
     type,
+    destDir,
   });
 
   // await setIconsInPlayground({
@@ -280,7 +283,7 @@ async function generateModule(angularComponents, type) {
     })
     .then((content) => {
       return fs.writeFile(
-        `${destHeroicons}/components/${type}/module.ts`,
+        `${destDir}/${type}/module.ts`,
         content
       );
     });
@@ -323,6 +326,36 @@ async function moveCommonCompoents() {
   await fs.writeFile(`${destHeroicons}/components/common/base-solid-icon.component.ts`, baseSolidComponent)
 }
 
+async function moveCommonComponentsStandalone() {
+  const destStandalone = `${destHeroicons}/components-standalone`;
+
+  // outline base component (standalone)
+  const baseOutlineComponent = await fs.readFile(`${here}/base-outline-icon.component.standalone.ts.tpl`, "utf8")
+
+  mkdirp.sync(`${destStandalone}/common`);
+  await fs.writeFile(`${destStandalone}/common/base-outline-icon.component.ts`, baseOutlineComponent)
+
+  // solid base component (standalone)
+  const baseSolidComponent = await fs.readFile(`${here}/base-solid-icon.component.standalone.ts.tpl`, "utf8")
+
+  await fs.writeFile(`${destStandalone}/common/base-solid-icon.component.ts`, baseSolidComponent)
+}
+
+async function generateStandaloneIndex(angularComponents, type, destDir) {
+  const contents = await writeFiles({
+    files: angularComponents
+      .map(({ className, filename, ...rest }) => ({
+        filename,
+        className,
+        ...rest,
+      })),
+    type,
+    destDir,
+  });
+
+  return contents;
+}
+
 async function run() {
   if (!shell.which("git")) {
 		shell.echo("Sorry, this script requires git repo");
@@ -345,49 +378,105 @@ async function run() {
     await cloneHeroicons();
   }
 
-  rimraf.sync(`${destHeroicons}/components`);
-  mkdirp.sync(`${destHeroicons}/components`);
+  const hasStandaloneVersions = versions.some(v => STANDALONE_VERSIONS.includes(v));
+  const hasRegularVersions = versions.some(v => !STANDALONE_VERSIONS.includes(v));
 
-  let allComponents = []
-  for (const type of TYPES) {
-    mkdirp.sync(`${destHeroicons}/components/${type}`);
+  // Generate regular (non-standalone) components
+  if (hasRegularVersions) {
+    rimraf.sync(`${destHeroicons}/components`);
+    mkdirp.sync(`${destHeroicons}/components`);
 
-    let files;
-    if (options.limit) {
-      files = (await fs.readdir(`${heroiconsPath}/${type}`)).slice(0, options.limit);
-    } else {
-      files = (await fs.readdir(`${heroiconsPath}/${type}`));
+    let allComponents = []
+    for (const type of TYPES) {
+      mkdirp.sync(`${destHeroicons}/components/${type}`);
+
+      let files;
+      if (options.limit) {
+        files = (await fs.readdir(`${heroiconsPath}/${type}`)).slice(0, options.limit);
+      } else {
+        files = (await fs.readdir(`${heroiconsPath}/${type}`));
+      }
+
+      const iconFiles = await compressSVG(files, type)
+
+      const iconFilesData = getFilesData(iconFiles);
+
+      const contentsIcon = await getSVGContent(iconFilesData);
+
+      const angularComponents = await getAngularComponent(contentsIcon);
+
+      console.log("👷 creating components...");
+      await writeFileIcons(angularComponents);
+
+      await generateModule(angularComponents, type);
+
+      await moveCommonCompoents();
+
+      allComponents = allComponents.concat(angularComponents);
     }
 
-    const iconFiles = await compressSVG(files, type)
+    for (const version of versions.filter(v => !STANDALONE_VERSIONS.includes(v))) {
+      await generatePlayground(allComponents, version);
 
-    const iconFilesData = getFilesData(iconFiles);
+      shell.exec(`yarn update:${version}`);
 
-    const contentsIcon = await getSVGContent(iconFilesData);
-
-    const angularComponents = await getAngularComponent(contentsIcon);
-
-    console.log("👷 creating components...");
-    await writeFileIcons(angularComponents);
-
-    await generateModule(angularComponents, type);
-
-    await moveCommonCompoents();
-
-    allComponents = allComponents.concat(angularComponents);
+      const appContent = await fs.readFile(
+        `${root}/assets/${version}/app.component.html`,
+        { encoding: "utf-8" }
+      );
+      const playgroundPath = `${root}/packages/${ANGULAR_VERSION[version]}/projects/playground/src/app/app.component.html`;
+      await fs.writeFile(playgroundPath, appContent)
+    }
   }
 
-  for (const version of versions) {
-    await generatePlayground(allComponents, version);
+  // Generate standalone components
+  if (hasStandaloneVersions) {
+    const destStandalone = `${destHeroicons}/components-standalone`;
+    rimraf.sync(destStandalone);
+    mkdirp.sync(destStandalone);
 
-    shell.exec(`yarn update:${version}`);
+    let allStandaloneComponents = []
+    for (const type of TYPES) {
+      mkdirp.sync(`${destStandalone}/${type}`);
 
-    const appContent = await fs.readFile(
-      `${root}/assets/${version}/app.component.html`,
-      { encoding: "utf-8" }
-    );
-    const playgroundPath = `${root}/packages/${ANGULAR_VERSION[version]}/projects/playground/src/app/app.component.html`;
-    await fs.writeFile(playgroundPath, appContent)
+      let files;
+      if (options.limit) {
+        files = (await fs.readdir(`${heroiconsPath}/${type}`)).slice(0, options.limit);
+      } else {
+        files = (await fs.readdir(`${heroiconsPath}/${type}`));
+      }
+
+      const iconFiles = await compressSVG(files, type)
+
+      const iconFilesData = getFilesData(iconFiles);
+
+      const contentsIcon = await getSVGContent(iconFilesData);
+
+      const angularComponents = await getAngularComponent(contentsIcon, true);
+
+      console.log("👷 creating standalone components...");
+      await writeFileIcons(angularComponents, destStandalone);
+
+      // No module for standalone - just write barrel exports (index.ts)
+      await generateStandaloneIndex(angularComponents, type, destStandalone);
+
+      await moveCommonComponentsStandalone();
+
+      allStandaloneComponents = allStandaloneComponents.concat(angularComponents);
+    }
+
+    for (const version of versions.filter(v => STANDALONE_VERSIONS.includes(v))) {
+      await generatePlayground(allStandaloneComponents, version);
+
+      shell.exec(`yarn update:${version}`);
+
+      const appContent = await fs.readFile(
+        `${root}/assets/${version}/app.component.html`,
+        { encoding: "utf-8" }
+      );
+      const playgroundPath = `${root}/packages/${ANGULAR_VERSION[version]}/projects/playground/src/app/app.component.html`;
+      await fs.writeFile(playgroundPath, appContent)
+    }
   }
 
   return;

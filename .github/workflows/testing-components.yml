@@ -28,6 +28,7 @@ jobs:
       angularv19: ${{ steps.filter.outputs.angularv19 }}
       angularv20: ${{ steps.filter.outputs.angularv20 }}
       angularv21: ${{ steps.filter.outputs.angularv21 }}
+      angularv21standalone: ${{ steps.filter.outputs.angularv21standalone }}
 
     steps:
       - uses: dorny/paths-filter@v3
@@ -56,6 +57,8 @@ jobs:
               - 'packages/angular-v20/**'
             angularv21:
               - 'packages/angular-v21/**'
+            angularv21standalone:
+              - 'packages/angular-v21-standalone/**'
 
   dependencies:
     name: "install dependencies"
@@ -799,3 +802,65 @@ jobs:
 
       - name: "running tests"
         run: cd packages/angular-v21 && yarn test
+
+  test-angular-v21standalonenode20:
+    name: test angular v21-standalone - node 20
+    needs: dependencies
+    if: ${{ success() && needs.changes.outputs.angularv21standalone == 'true' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: "Restore cache files"
+        uses: "actions/cache@v4"
+        id: "main-files"
+        with:
+          path: |
+            tsconfig.json
+            packages
+          key: "${{ github.sha }}"
+
+      - name: "install dependencies"
+        run: |
+          mv tsconfig.json packages/angular-v21-standalone
+          rm packages/angular-v21-standalone/yarn.lock
+          cd packages/angular-v21-standalone
+          yarn install
+
+      - name: "running tests"
+        run: cd packages/angular-v21-standalone && yarn test
+
+  test-angular-v21standalonenode22:
+    name: test angular v21-standalone - node 22
+    needs: dependencies
+    if: ${{ success() && needs.changes.outputs.angularv21standalone == 'true' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: "Restore cache files"
+        uses: "actions/cache@v4"
+        id: "main-files"
+        with:
+          path: |
+            tsconfig.json
+            packages
+          key: "${{ github.sha }}"
+
+      - name: "install dependencies"
+        run: |
+          mv tsconfig.json packages/angular-v21-standalone
+          rm packages/angular-v21-standalone/yarn.lock
+          cd packages/angular-v21-standalone
+          yarn install
+
+      - name: "running tests"
+        run: cd packages/angular-v21-standalone && yarn test

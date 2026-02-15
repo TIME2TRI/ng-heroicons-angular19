@@ -39,6 +39,7 @@ const ANGULAR_VERSION = {
   "v19": "angular-v19",
   "v20": "angular-v20",
   "v21": "angular-v21",
+  "v21s": "angular-v21-standalone",
 };
 
 async function prompt(props, onCancel = null) {

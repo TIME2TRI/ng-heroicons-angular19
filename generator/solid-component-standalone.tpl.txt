@@ -1,0 +1,10 @@
+import { Component } from '@angular/core';
+
+import { BaseSolidIconComponent } from '../common/base-solid-icon.component';
+
+@Component({
+  selector: '{{selector}}',
+  template: '{{template}}',
+  standalone: true
+})
+export class {{className}} extends BaseSolidIconComponent { }

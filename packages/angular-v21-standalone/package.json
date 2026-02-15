@@ -1,5 +1,5 @@
 {
-  "name": "angular-v21",
+  "name": "angular-v21-standalone",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
