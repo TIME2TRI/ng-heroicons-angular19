@@ -25,7 +25,14 @@
       "Bash(export PATH:*)",
       "Bash(export PATH=\"/usr/bin:/bin:$PATH\")",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(export PATH=\"/opt/homebrew/bin:/usr/local/bin:$PATH\")",
+      "Bash(/usr/bin/head:*)",
+      "Bash(export PATH=\"/Users/soerenkroell/.nvm/versions/node/v20.11.0/bin:$PATH\")",
+      "Bash(/usr/bin/which:*)",
+      "Bash(/bin/ls:*)",
+      "Bash(export PATH=\"/Users/soerenkroell/.nvm/versions/node/v22.17.1/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin\")",
+      "Bash(git push:*)"
     ]
   }
 }
